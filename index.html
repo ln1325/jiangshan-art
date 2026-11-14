@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#241a35" />
+  <title>江山艺术 · 出征誓师大会祝福墙</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      overflow: hidden;
+      color: #fffaf0;
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+      background:
+        linear-gradient(135deg, rgba(28, 17, 47, .56), rgba(91, 48, 69, .38)),
+        url("https://images.unsplash.com/photo-1503095396549-807759245b35?auto=format&fit=crop&w=2000&q=85") center / cover no-repeat fixed;
+    }
+
+    body::before {
+      position: fixed;
+      inset: 0;
+      content: "";
+      background: radial-gradient(ellipse at center, transparent 10%, rgba(20, 12, 31, .42) 100%);
+      pointer-events: none;
+    }
+
+    .barrage-layer {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .barrage {
+      position: absolute;
+      left: 0;
+      top: var(--top);
+      white-space: nowrap;
+      color: var(--color);
+      font-size: var(--size);
+      font-weight: 700;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, .78);
+      animation: fly var(--duration) linear both;
+      will-change: transform;
+    }
+
+    @keyframes fly {
+      from { transform: translateX(100vw); }
+      to { transform: translateX(-110%); }
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      min-height: 100vh;
+      place-items: center;
+      padding: 24px;
+      pointer-events: none;
+    }
+
+    .panel {
+      width: min(720px, 100%);
+      padding: clamp(32px, 7vw, 64px);
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, .32);
+      border-radius: 28px;
+      background: rgba(255, 255, 255, .13);
+      box-shadow: 0 24px 80px rgba(18, 8, 29, .3);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      color: #ffe5a6;
+      font-size: 14px;
+      letter-spacing: .3em;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(36px, 8vw, 68px);
+      letter-spacing: .12em;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, .3);
+    }
+
+    .subtitle {
+      margin: 20px 0 28px;
+      color: rgba(255, 250, 240, .94);
+      font-size: clamp(15px, 2.5vw, 18px);
+      line-height: 1.9;
+    }
+
+    .divider {
+      width: 56px;
+      height: 2px;
+      margin: 0 auto 20px;
+      background: #ffe5a6;
+    }
+
+    .footer {
+      margin: 0;
+      color: rgba(255, 255, 255, .8);
+      font-size: 13px;
+      letter-spacing: .08em;
+    }
+
+    .status {
+      position: fixed;
+      right: 12px;
+      bottom: 10px;
+      z-index: 2;
+      margin: 0;
+      color: rgba(255, 255, 255, .76);
+      font-size: 12px;
+      text-shadow: 0 1px 5px #000;
+    }
+
+    @media (max-width: 480px) {
+      .barrage { font-size: max(18px, var(--size)); }
+      .panel { border-radius: 22px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .barrage { animation-duration: 18s !important; }
+    }
+  </style>
+</head>
+<body>
+  <div id="barrageLayer" class="barrage-layer" aria-hidden="true"></div>
+
+  <main class="content">
+    <section class="panel">
+      <p class="eyebrow">JIANGSHAN ART · 2027</p>
+      <h1>艺起出征</h1>
+      <p class="subtitle">江山艺术 2027 届联考出征誓师大会<br />以热爱为笔，以梦想为名，奔赴闪耀的未来</p>
+      <div class="divider"></div>
+      <p class="footer">愿每一份努力，都在考场上绽放光芒 ✨</p>
+    </section>
+  </main>
+
+  <p id="status" class="status" role="status" aria-live="polite"></p>
+
+  <script>
+    const layer = document.getElementById("barrageLayer");
+    const status = document.getElementById("status");
+    const colors = ["#fff8df", "#ffe29a", "#ffd6e7", "#d9f4ff", "#e7ddff", "#dfffe3"];
+    const laneCount = 9;
+    const laneFreeAt = Array(laneCount).fill(0);
+
+    function showBarrage(text) {
+      const item = document.createElement("span");
+      item.className = "barrage";
+      item.textContent = text;
+
+      const lane = laneFreeAt.indexOf(Math.min(...laneFreeAt));
+      const now = Date.now();
+      const duration = Math.max(9, Math.min(17, 9 + text.length * 0.18));
+      const startAt = Math.max(now, laneFreeAt[lane]);
+      const delay = startAt - now;
+
+      item.style.setProperty("--top", `${7 + lane * 10.5}%`);
+      item.style.setProperty("--size", `${22 + Math.floor(Math.random() * 10)}px`);
+      item.style.setProperty("--duration", `${duration}s`);
+      item.style.setProperty("--color", colors[Math.floor(Math.random() * colors.length)]);
+      layer.appendChild(item);
+
+      laneFreeAt[lane] = startAt + duration * 1000 * 0.72;
+      if (delay > 0) {
+        item.style.animationPlayState = "paused";
+        window.setTimeout(() => { item.style.animationPlayState = "running"; }, delay);
+      }
+
+      item.addEventListener("animationend", () => item.remove(), { once: true });
+    }
+
+    function playInOrder(wishes) {
+      let index = 0;
+      const interval = Math.max(750, Math.min(1400, 9000 / wishes.length));
+      window.setInterval(() => {
+        showBarrage(wishes[index]);
+        index = (index + 1) % wishes.length;
+      }, interval);
+    }
+
+    function playRandom(wishes) {
+      let previousIndex = -1;
+      window.setInterval(() => {
+        let index = Math.floor(Math.random() * wishes.length);
+        if (wishes.length > 1) {
+          while (index === previousIndex) index = Math.floor(Math.random() * wishes.length);
+        }
+        previousIndex = index;
+        showBarrage(wishes[index]);
+      }, 900);
+    }
+
+    async function loadWishes() {
+      try {
+        const response = await fetch("./wishes.json");
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const wishes = await response.json();
+        if (!Array.isArray(wishes) || wishes.length === 0 || !wishes.every(item => typeof item === "string" && item.trim())) {
+          throw new Error("wishes.json 必须是非空的祝福语字符串数组");
+        }
+
+        playInOrder(wishes); // 改成 playRandom(wishes) 即可随机播放
+      } catch (error) {
+        console.error("祝福语加载失败：", error);
+        status.textContent = "祝福语加载失败，请检查 wishes.json";
+      }
+    }
+
+    loadWishes();
+  </script>
+</body>
+</html>
