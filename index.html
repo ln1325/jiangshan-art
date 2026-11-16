@@ -214,7 +214,7 @@
           throw new Error("wishes.json 必须是非空的祝福语字符串数组");
         }
 
-        playInOrder(wishes); // 改成 playRandom(wishes) 即可随机播放
+        playRandom(wishes); // 改成 playRandom(wishes) 即可随机播放
       } catch (error) {
         console.error("祝福语加载失败：", error);
         status.textContent = "祝福语加载失败，请检查 wishes.json";
